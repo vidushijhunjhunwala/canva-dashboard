@@ -1,0 +1,52 @@
+{
+  "lastUpdated": "2026-06-07",
+  "platforms": {
+    "redbubble":  { "name": "Redbubble",  "icon": "ð«§", "status": "active",  "totalUploaded": 9,  "sales": 0, "estPerSale": 3.50, "storeUrl": "https://www.redbubble.com/people/vidushidesignstudio/shop" },
+    "teepublic":  { "name": "TeePublic",  "icon": "ð", "status": "active",  "totalUploaded": 3,  "sales": 0, "estPerSale": 5.00, "storeUrl": "https://www.teepublic.com/user/vidushidesignstudio" },
+    "society6":   { "name": "Society6",   "icon": "ð¼ï¸", "status": "closed",  "totalUploaded": 0,  "sales": 0, "estPerSale": 4.00, "storeUrl": "https://society6.com", "note": "Society6 confirmed CLOSED to new artist applications (\"We're not accepting new applications right now\" â help.society6.com). Not a temporary maintenance issue; cannot create a seller account until they reopen submissions. Revisit periodically." },
+    "gumroad":    { "name": "Gumroad",    "icon": "ð", "status": "active",  "totalUploaded": 1,  "sales": 0, "estPerSale": 5.00, "storeUrl": "https://app.gumroad.com/products" }
+  },
+  "dailyLog": [
+    {
+      "date": "2026-06-06",
+      "designsGenerated": 7,
+      "designTitles": [
+        "Live Simply Love Deeply - Minimalist Motivational Wall Art",
+        "Be Yourself - Bold Typography Quote Art Print",
+        "Good Vibes Only - Retro Sunset Print",
+        "Stay Wild Moon Child - Boho Line Art",
+        "Dream Big Work Hard - Modern Quote Poster",
+        "Choose Joy - Pastel Typography Print",
+        "Wildflower Soul - Botanical Line Art"
+      ],
+      "uploads": {
+        "redbubble": { "count": 9, "status": "done" },
+        "teepublic": { "count": 1, "status": "in_progress", "note": "Single-design publish succeeded; bulk uploader stuck at 1 of 6, retrying via single uploader" },
+        "society6":  { "count": 0, "status": "blocked", "note": "Site-wide maintenance/migration banner â cannot log in to studio" },
+        "gumroad":   { "count": 1, "status": "done" }
+      }
+    },
+    {
+      "date": "2026-06-07",
+      "designsGenerated": 0,
+      "designTitles": [],
+      "uploads": {
+        "redbubble": { "count": 9, "status": "done", "note": "No change â already uploaded" },
+        "teepublic": { "count": 3, "status": "done", "note": "Bulk uploader published 2 more designs (\"Your Next Breakthrough Begins Now\" and \"Essential Strategies for Growth\"), bringing store total from 1 to 3. 3 other queued designs were unrecoverable/stuck and skipped via the Skip & Cancel link â can be retried individually later: Be Yourself, Embrace Your Journey to Success, Elevate Your Brand." },
+        "society6":  { "count": 0, "status": "closed", "note": "Confirmed via Society6 Help Center: artist applications are currently closed (\"We're not accepting new applications right now\"). This is a platform policy, not a temporary outage â cannot proceed until they reopen." },
+        "gumroad":   { "count": 1, "status": "done", "note": "No change" }
+      }
+    }
+  ],
+  "liveLinks": [
+    { "platform": "teepublic", "title": "Live Simply Love Deeply - Minimalist Motivational Wall Art", "url": "https://www.teepublic.com/poster-and-art/93469359-live-simply-love-deeply-minimalist-motivational-wa" },
+    { "platform": "teepublic", "title": "Your Next Breakthrough Begins Now - Motivational Quote Print", "url": "https://www.teepublic.com/user/vidushidesignstudio" },
+    { "platform": "teepublic", "title": "Essential Strategies for Growth - Small Business Tips Print", "url": "https://www.teepublic.com/user/vidushidesignstudio" }
+  ],
+  "notes": [
+    "Society6 is CLOSED to new artist sign-ups as of 2026-06-07 (confirmed via their Help Center: \"We're not accepting new applications right now\") â this is a platform policy decision, not maintenance. Check back periodically for when they reopen submissions; until then no Society6 uploads are possible.",
+    "TeePublic bulk uploader is unreliable (submit buttons cause renderer timeouts); the 'Skip & Cancel' link (GET request) reliably removes stuck designs from the queue without freezing. Single-design uploader also works as a fallback.",
+    "Images for TeePublic must be upscaled to at least 1500x1995px (5000x5500px to unlock all product types).",
+    "3 TeePublic designs got stuck in the bulk queue and were skipped â can be re-uploaded individually later: 'Be Yourself - Bold Typography Quote Art Print', 'Embrace Your Journey to Success - Minimalist Diorama Print', 'Elevate Your Brand - Minimalist Product Promotion Print'."
+  ]
+}
