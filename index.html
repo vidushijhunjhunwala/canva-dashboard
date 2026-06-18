@@ -1,1 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canva Earnings & Upload Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 24px; max-width: 1100px; margin: 0 auto; }
 
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 24px; font-weight: 700; }
+  .header .subtitle { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+  .pill { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: #e5e5ea; color: #1d1d1f; font-weight: 600; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .stat-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .stat-card .label { font-size: 11px; color: #6e6e73; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 6px; }
+  .stat-card .sub { font-size: 11px; color: #6e6e73; margin-top: 4px; }
+  .stat-card.blue { background: linear-gradient(135deg,#0071e3,#42a5ff); }
+  .stat-card.blue .label, .stat-card.blue .sub { color: rgba(255,255,255,0.78); }
+  .stat-card.blue .value { color: white; }
+  .stat-card.green .value { color: #16a34a; }
+
+  .section { background: white; border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section h2 { font-size: 16px; font-weight: 600; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .badge-yellow { background: #fef9c3; color: #a16207; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+
+  .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .platform-card { border: 1.5px solid #e5e5ea; border-radius: 12px; padding: 16px; }
+  .platform-card.active { border-color: #34c759; background: #f0fdf4; }
+  .platform-card.blocked { border-color: #fca5a5; background: #fef2f2; }
+  .platform-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .platform-name-row { display: flex; align-items: center; gap: 8px; }
+  .platform-icon { font-size: 22px; }
+  .platform-name { font-size: 15px; font-weight: 600; }
+  .platform-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .pstat .pl { font-size: 10px; color: #6e6e73; font-weight: 600; text-transform: uppercase; }
+  .pstat .pv { font-size: 19px; font-weight: 700; }
+  .pstat .pv.zero { color: #aeaeb2; }
+  .pstat .pv.money { color: #16a34a; }
+  .platform-note { font-size: 12px; color: #a16207; margin-top: 10px; background: #fef9c3; border-radius: 8px; padding: 8px 10px; }
+  .platform-link { display: inline-block; margin-top: 10px; font-size: 12px; color: #0071e3; text-decoration: none; font-weight: 500; }
+
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .log-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: #6e6e73; font-weight: 600; padding: 8px 10px; border-bottom: 1px solid #e5e5ea; }
+  .log-table td { padding: 10px; border-bottom: 1px solid #f2f2f7; vertical-align: top; }
+  .log-table tr:last-child td { border-bottom: none; }
+  .status-chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; margin: 2px 4px 2px 0; }
+  .status-done { background: #dcfce7; color: #16a34a; }
+  .status-progress { background: #fef9c3; color: #a16207; }
+  .status-blocked { background: #fee2e2; color: #dc2626; }
+
+  .links-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .link-chip { display: inline-flex; align-items: center; gap: 6px; background: #f2f2f7; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; text-decoration: none; color: #1d1d1f; }
+  .link-chip:hover { background: #e5e5ea; }
+
+  .note-list { list-style: none; }
+  .note-list li { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f5f7; font-size: 13px; color: #3a3a3c; }
+  .note-list li:last-child { border-bottom: none; }
+  .note-dot { width: 6px; height: 6px; border-radius: 50%; background: #0071e3; flex-shrink: 0; margin-top: 6px; }
+
+  .chart-wrap { height: 200px; position: relative; }
+  .last-updated { text-align: center; font-size: 11px; color: #aeaeb2; margin-top: 16px; }
+  .empty-state { text-align: center; padding: 24px; color: #6e6e73; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>ð¨ Canva Earnings & Upload Tracker</h1>
+    <div class="subtitle">Daily design generation â Redbubble Â· TeePublic Â· Society6 Â· Gumroad</div>
+  </div>
+  <span class="pill" id="updatedPill">Loadingâ¦</span>
+</div>
+
+<div id="mainContent">
+  <div class="empty-state">Loading data.jsonâ¦</div>
+</div>
+<div class="last-updated">Data is updated by the daily automation run â edit <code>data.json</code> in this repo to refresh.</div>
+
+<script>
+const ICONS_FALLBACK = {redbubble:'ð«§', teepublic:'ð', society6:'ð¼ï¸', gumroad:'ð'};
+
+function fmt$(n){ return '$'+n.toFixed(2); }
+
+async function load(){
+  let data;
+  try{
+    const res = await fetch('data.json', {cache:'no-store'});
+    data = await res.json();
+  }catch(e){
+    document.getElementById('mainContent').innerHTML = '<div class="empty-state">Could not load data.json â if not in the same folder as this dashboard.</div>';
+    return;
+  }
+
+  document.getElementById('updatedPill').textContent = 'Last updated: ' + data.lastUpdated;
+
+  const platforms = data.platforms || {};
+  const totalUploaded = Object.values(platforms).reduce((a,p)=>a+(p.totalUploaded||0),0);
+  const totalSales = Object.values(platforms).reduce((a,p)=>a+(p.sales||0),0);
+  const totalEarnings = Object.values(platforms).reduce((a,p)=>a+(p.sales||0)*(p.estPerSale||0),0);
+  const activeCount = Object.values(platforms).filter(p=>p.status==='active').length;
+
+  let html = `
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="label">Est. Total Earned</div>
+        <div class="value">${fmt$(totalEarnings)}</div>
+        <div class="sub">Across all platforms</div>
+      </div>
+      <div class="stat-card ${totalSales>0?'green':''}">
+        <div class="label">Total Sales</div>
+        <div class="value">${totalSales}</div>
+        <div class="sub">${totalSales===0?'First sale coming soon ð':'Nice! ð'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Designs Uploaded</div>
+        <div class="value">${totalUploaded}</div>
+        <div class="sub">Lifetime, all platforms</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Active Platforms</div>
+        <div class="value">${activeCount} / ${Object.keys(platforms).length}</div>
+        <div class="sub">Currently uploading</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2>Platform Breakdown</h2>
+        <span class="badge badge-blue">From data.json</span>
+      </div>
+      <div class="platform-grid">
+        ${Object.entries(platforms).map(([key,p])=>`
+          <div class="platform-card ${p.status==='active'?'active':p.status==='blocked'?'blocked':''}">
+            <div class="platform-top">
+              <div class="platform-name-row">
+                <span class="platform-icon">${p.icon||ICONS_FALLBACK[key]||'ð¨'}</span>
+                <span class="platform-name">${p.name||key}</span>
+              </div>
+              <span class="badge ${p.status==='active'?'badge-green':p.status==='blocked'?'badge-red':'badge-yellow'}">
+                ${p.status==='active'?'â Active':p.status==='blocked'?'â Blocked':'â Pending'}
+              </span>
+            </div>
+            <div class="platform-stats">
+              <div class="pstat"><div class="pl">Uploaded</div><div class="pv ${(p.totalUploaded||0)===0?'zero':''}">${p.totalUploaded||0}</div></div>
+              <div class="pstat"><div class="pl">Sales</div><div class="pv $y(p.sales||0)===0?'zero':''}">${p.sales||0}</div></div>
+              <div class="pstat"><div class="pl">Earned</div><div class="pv money">${fmt$((p.sales||0)*(p.estPerSale||0))}</div></div>
+            </div>
+            ${p.note?`<div class="platform-note">â ï¸ ${p.note}</div>`:''}
+            ${p.storeUrl?`<a class="platform-link" href="${p.storeUrl}" target="_blank">View store â</a>`:''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><h2>ð Daily Activity Log</h2></div>
+      ${(data.dailyLog && data.dailyLog.length) ? `
+      <table class="log-table">
+        <thead><tr><th>Date</th><th>Designs Generated</th><th>Upload Status</th></tr></thead>
+        <tbody>
+          ${data.dailyLog.slice().reverse().map(d=>`
+            <tr>
+              <td><strong>${d.date}</strong></td>
+              <td>${d.designsGenerated} designs<br><span style="color:#6e6e73;font-size:11px">${(d.designTitles||[]).slice(0,3).join(' Â· ')}${(d.designTitles||[]).length>3?' â¦':''}</span></td>
+              <td>${Object.entries(d.uploads||{}).map(([k,u])=>{
+                const cls = u.status==='done'?'status-done':u.status==='blocked'?'status-blocked':'status-progress';
+                const icon = ICONS_FALLBACK[k]||'';
+                return `<span class="status-chip ${cls}">${icon} ${platforms[k]?platforms[k].name:k}: ${u.count}</span>`;
+              }).join('')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>` : '<div class="empty-state">No log entries yet.</div>'}
+    </div>
+
+    ${(data.liveLinks && data.liveLinks.length) ? `
+    <div class="section">
+      <div class="section-header"><h2>ð Live Listings</h2></div>
+      <div class="links-row">
+        ${data.liveLinks.map(l=>`<a class="link-chip" href="${l.url}" target="_blank">${ICONS_FALLBACK[l.platform]||''} ${l.title}</a>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${totalSales>0?`<div class="section">
+      <h2 style="margin-bottom:14px">Earnings by Platform</h2>
+      <div class="chart-wrap"><canvas id="earningsChart"></canvas></div>
+    </div>`:''}
+
+    ${(data.notes && data.notes.length) ? `
+    <div class="section">
+      <div class="section-header"><h2>ð Notes & Blockers</h2></div>
+      <ul class="note-list">
+        ${data.notes.map(n=>`<li><div class="note-dot"></div><div>${n}</div></li>`).join('')}
+      </ul>
+    </div>` : ''}
+
+    <div class="section">
+      <h2 style="margin-bottom:12px">Quick Links</h2>
+      <div class="links-row">
+        ${Object.entries(platforms).map(([k,p])=>p.storeUrl?`<a class="link-chip" href="${p.storeUrl}" target="_blank">${p.icon||ICONS_FALLBACK[k]} ${p.name}</a>`:'').join('')}
+        <a class="link-chip" href="https://www.canva.com/projects" target="_blank">ð¨ Canva Projects</a>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('mainContent').innerHTML = html;
+
+  if(totalSales>0){
+    const ctx=document.getElementById('earningsChart');
+    if(ctx) new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:Object.values(platforms).map(p=>p.name),
+        datasets:[{
+          label:'Earnings ($)',
+          data:Object.values(platforms).map(p=>(p.sales||0)*(p.estPerSale||0)),
+          backgroundColor:'#0071e399',
+          borderColor:'#0071e3',
+          borderWidth:2, borderRadius:6
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'$'+v}}}}
+    });
+  }
+}
+
+load();
+</script>
+</body>
+</html>
